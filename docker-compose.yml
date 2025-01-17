@@ -1,0 +1,36 @@
+name: student-list-app
+
+services:
+  web:
+    image: php:apache
+    environment:
+      - USERNAME=${API_USERNAME}
+      - PASSWORD=${API_PASSWORD}
+      - API_IP=${API_IP}
+      - API_PORT=${API_PORT}
+    volumes:
+      - ./website:/var/www/html
+    depends_on:
+      - api
+    ports:
+      - 8080:80
+    networks:
+      - app_network
+    restart: unless-stopped
+
+  api:
+    image: docker.io/library/api:v1
+    volumes:
+      - ./simple_api/student_age.json:/data/student_age.json
+    ports:
+      - 5000:5000
+    networks:
+      - app_network
+    restart: unless-stopped
+
+networks:
+  app_network:
+
+secrets:
+  api_password:
+    file: api_password.txt
